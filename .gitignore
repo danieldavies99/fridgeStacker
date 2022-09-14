@@ -2,7 +2,7 @@ test/images/actual.png
 test/images/diff-*.png
 
 # Generated files
-# dist/
+dist/
 
 # Logs
 logs
