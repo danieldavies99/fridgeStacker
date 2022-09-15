@@ -26,7 +26,9 @@ class Game extends Engine {
     super({
       displayMode: DisplayMode.FitScreen,
       suppressPlayButton: true,
-      backgroundColor: new Color(43,58,103)
+      backgroundColor: new Color(43,58,103),
+      height: 1280,
+      width: 1920,
     });
   }
 
@@ -35,25 +37,26 @@ class Game extends Engine {
     const rand = Math.random();
     const shouldBounce = Math.random() < 0.1;
     let fridge: Fridge;
-    if(rand < 0.33) {
+    if(rand < 0.5) {
       fridge = new Fridge2x4(
         this.drawWidth,
         this.drawHeight,
         shouldBounce
     );
-    } else if (rand < 0.66 ) {
+    } else {
       fridge = new Fridge4x2(
         this.drawWidth,
         this.drawHeight,
         shouldBounce
       );
-    } else {
-      fridge = new Fridge4x4(
-        this.drawWidth,
-        this.drawHeight,
-        shouldBounce
-      );
     }
+    // } else {
+    //   fridge = new Fridge4x4(
+    //     this.drawWidth,
+    //     this.drawHeight,
+    //     shouldBounce
+    //   );
+    // }
     // else {
     //   fridge = new Fridge5x4(
     //     this.drawWidth,
@@ -72,6 +75,9 @@ class Game extends Engine {
 
   public start() {
 
+    // Automatically load all default resources
+    const loader = new Loader(Object.values(Resources));
+  
     // Create new scene with a fridge
     this.levelOne = new LevelOne();
 
@@ -101,9 +107,6 @@ class Game extends Engine {
 
     game.add('levelOne', this.levelOne);
 
-    // Automatically load all default resources
-    // const loader = new Loader(Object.values(Resources));
-
     this.levelOne.onPostUpdate = () => {
       if (this.getCurrentFridge().getHasLanded() && !this.newFridgeQueued) {
         this.newFridgeQueued = true;
@@ -121,7 +124,7 @@ class Game extends Engine {
       this.scoreIndicator.setNumStacked(numStacked)
     }
 
-    return super.start();
+    return super.start(loader);
   }
 }
 
