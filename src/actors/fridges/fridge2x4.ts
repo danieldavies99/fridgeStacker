@@ -1,6 +1,9 @@
-import { Actor, CollisionType, Color, vec } from 'excalibur';
-import { Resources } from '../../resources';
+import { Actor, CollisionStartEvent, CollisionType, Color, PreCollisionEvent, vec } from 'excalibur';
+import { Truck } from '../truck/truck';
 import { Fridge } from './fridge';
+import { Fridge4x2 } from './fridge4x2';
+import { Fridge4x4 } from './fridge4x4';
+import { Fridge5x4 } from './fridge5x4';
 
 export class Fridge2x4  extends Actor implements Fridge {
   private hasLanded = false;
@@ -28,39 +31,41 @@ export class Fridge2x4  extends Actor implements Fridge {
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
   }
+
   onInitialize() {
     this.body.collisionType = CollisionType.Active
     this.body.bounciness = this.isBouncy ? 0.75 : 0.05;
 
-    this.on("collisionstart", () => {
-      this.land();
-    })
+    this.on('collisionstart', (evt) => this.onCollisionStart(evt));
+    this.on('precollision', (evt) => this.onPreCollision(evt));
+    this.on('postupdate', (evt) => this.onPostUpdate());
+  }
 
-    
-    this.on("precollision", (evt) => {
-      const collidingWith = evt.other.constructor.name;
-      if(collidingWith === "Truck") {
+  onCollisionStart(evt: CollisionStartEvent) {
+    this.land();
+  }
+
+  onPreCollision(evt: PreCollisionEvent) {
+    if(evt.other instanceof Truck) {
+      this.isStacked = true;
+    }
+
+    if(
+      evt.other instanceof Fridge2x4
+      || evt.other instanceof Fridge4x2
+      || evt.other instanceof Fridge4x4
+      || evt.other instanceof Fridge5x4
+    ) {
+      if(evt.other.getIsStacked()) {
         this.isStacked = true;
       }
+    }
+  }
 
-      if(
-        collidingWith === "Fridge2x4"
-        || collidingWith === "Fridge4x2"
-        || collidingWith === "Fridge4x4"
-        || collidingWith === "Fridge5x4"
-      ) {
-        if(evt.other["isStacked"]) {
-          this.isStacked = true
-        }
-      }
-      // console.log(evt.other.constructor.name)
-    })
-
-    this.onPostUpdate = () => {
-      this.isStacked = false;
-      if(this.isOutOfBounds()) {
-        this.land();
-      }
+  onPostUpdate() {
+    this.isStacked = false;
+    if(this.isOutOfBounds()) {
+      this.land();
     }
   }
 
