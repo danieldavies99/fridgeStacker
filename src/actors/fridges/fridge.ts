@@ -5,4 +5,5 @@ export interface Fridge extends Actor{
   snapRight(): void
   getHasLanded(): boolean
   land(): void
+  getIsStacked(): boolean
 }

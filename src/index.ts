@@ -7,12 +7,14 @@ import { Fridge } from './actors/fridges/fridge';
 import { Fridge4x2 } from './actors/fridges/fridge4x2';
 import { Fridge4x4 } from './actors/fridges/fridge4x4';
 import { Fridge5x4 } from './actors/fridges/fridge5x4';
+import { ScoreIndicator } from './actors/scoreIndicator/scoreIndicator';
 
 
 /**
  * Managed game class
  */
 class Game extends Engine {
+  private scoreIndicator: ScoreIndicator;
   private fridges: Fridge[] = [];
   private truck: Truck;
 
@@ -78,6 +80,9 @@ class Game extends Engine {
     this.truck = new Truck(this.drawWidth, this.drawHeight);
     this.levelOne.add(this.truck);
 
+    this.scoreIndicator = new ScoreIndicator(this.drawWidth, this.drawHeight);
+    this.levelOne.add(this.scoreIndicator);
+
     game.input.keyboard.on("press", (evt) => {
       if (
         (evt.key === "ArrowLeft" || evt.key === "KeyA")
@@ -106,6 +111,14 @@ class Game extends Engine {
           this.spawnNewFridge();
         }, (1000));
       }
+      
+      let numStacked = 0;
+      this.fridges.forEach( fridge => {
+        if(fridge.getIsStacked() === true) {
+          numStacked++;
+        }
+      })
+      this.scoreIndicator.setNumStacked(numStacked)
     }
 
     return super.start();

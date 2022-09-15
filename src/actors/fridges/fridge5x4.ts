@@ -9,6 +9,7 @@ export class Fridge5x4 extends Actor implements Fridge {
   private gameHeight: number;
 
   private isBouncy: boolean = false;
+  private isStacked: boolean = false;
 
   constructor(
     gameWidth: number,
@@ -36,7 +37,27 @@ export class Fridge5x4 extends Actor implements Fridge {
       this.land();
     })
 
+    this.on("precollision", (evt) => {
+      const collidingWith = evt.other.constructor.name;
+      if(collidingWith === "Truck") {
+        this.isStacked = true;
+      }
+
+      if(
+        collidingWith === "Fridge2x4"
+        || collidingWith === "Fridge4x2"
+        || collidingWith === "Fridge4x4"
+        || collidingWith === "Fridge5x4"
+      ) {
+        if(evt.other["isStacked"]) {
+          this.isStacked = true
+        }
+      }
+      // console.log(evt.other.constructor.name)
+    })
+
     this.onPostUpdate = () => {
+      this.isStacked = false;
       if(this.isOutOfBounds()) {
         this.land();
       }
@@ -61,5 +82,9 @@ export class Fridge5x4 extends Actor implements Fridge {
 
   getHasLanded(): boolean {
     return this.hasLanded
+  }
+
+  getIsStacked(): boolean {
+    return this.isStacked;
   }
 }
