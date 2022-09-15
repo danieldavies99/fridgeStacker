@@ -40,7 +40,7 @@ class Game extends Engine {
         this.drawWidth,
         this.drawHeight,
         shouldBounce
-      );
+    );
     } else if (rand < 0.66 ) {
       fridge = new Fridge4x2(
         this.drawWidth,

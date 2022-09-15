@@ -1,4 +1,4 @@
-import { Actor, CollisionStartEvent, CollisionType, Color, PreCollisionEvent, vec } from 'excalibur';
+import { Actor, CollisionStartEvent, CollisionType, Color, ExcaliburGraphicsContext, PreCollisionEvent, vec } from 'excalibur';
 import { Truck } from '../truck/truck';
 import { Fridge } from './fridge';
 import { Fridge4x2 } from './fridge4x2';
@@ -17,7 +17,7 @@ export class Fridge2x4  extends Actor implements Fridge {
   constructor(
     gameWidth: number,
     gameHeight: number,
-    isBouncy: boolean,
+    isBouncy: boolean
   ) {
     let lightness = 255 - (255 * (Math.random() / 2));
     let color = isBouncy ? new Color(175, 162, 255) : new Color(lightness, lightness, lightness)
@@ -34,7 +34,7 @@ export class Fridge2x4  extends Actor implements Fridge {
 
   onInitialize() {
     this.body.collisionType = CollisionType.Active
-    this.body.bounciness = this.isBouncy ? 0.75 : 0.05;
+    this.body.bounciness = this.isBouncy ? 0.75 : 0.01;
 
     this.on('collisionstart', (evt) => this.onCollisionStart(evt));
     this.on('precollision', (evt) => this.onPreCollision(evt));
