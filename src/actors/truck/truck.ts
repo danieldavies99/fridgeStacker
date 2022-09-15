@@ -1,5 +1,6 @@
 import { Actor, CollisionType, Color, CompositeCollider, Polygon, Raster, Rectangle, Shape, vec } from 'excalibur';
 import { Resources } from '../../resources';
+import { TruckStackCollider } from './truckStackCollider';
 
 const truckCollider = new CompositeCollider([
     Shape.Box(240, 80, vec(.5, 0)),
@@ -24,16 +25,18 @@ class TruckBody extends Polygon {
 }
 
 export class Truck extends Actor {
+  private truckStackCollider: TruckStackCollider
   constructor(
     gameWidth: number,
     gameHeight: number
   ) {
     super({
       pos: vec(gameWidth, gameHeight - 100),
-      width: 300,
-      height: 80,
       collider: truckCollider,
     });
+
+    this.truckStackCollider = new TruckStackCollider(240, 200)
+    this.addChild(this.truckStackCollider)
   }
 
   onInitialize() {
@@ -42,7 +45,7 @@ export class Truck extends Actor {
     this.graphics.use(truckBody);
 
     this.body.collisionType = CollisionType.Fixed
-    this.body.bounciness = 0.05;
+    this.body.bounciness = 0.00;
     this.vel = vec(-20, 0)
   }
 }

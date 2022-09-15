@@ -1,6 +1,6 @@
-import { Actor, Collider, CollisionStartEvent, CollisionType, Color, ExcaliburGraphicsContext, PolygonCollider, PreCollisionEvent, Shape, vec } from 'excalibur';
+import { Actor, CollisionStartEvent, CollisionType, PreCollisionEvent, vec } from 'excalibur';
 import { Resources } from '../../resources';
-import { Truck } from '../truck/truck';
+import { TruckStackCollider } from '../truck/truckStackCollider';
 import { Fridge } from './fridge';
 import { Fridge2x4 } from './fridge2x4';
 import { StackCollider } from './stackCollider';
@@ -53,16 +53,18 @@ export class Fridge4x2 extends Actor implements Fridge {
   }
 
   onPreCollision(evt: PreCollisionEvent) {
-    if(evt.other instanceof Truck) {
+    if(evt.other instanceof TruckStackCollider) {
       this.isStacked = true;
     }
 
-    if(
-      evt.other instanceof Fridge2x4
-      || evt.other instanceof Fridge4x2
-    ) {
-      if(evt.other.getIsStacked()) {
-        this.isStacked = true;
+    if(evt.other instanceof StackCollider) {
+      if(
+        evt.other.parent instanceof Fridge2x4
+        || evt.other.parent instanceof Fridge4x2
+      ) {
+        if(evt.other.parent.getIsStacked()) {
+          this.isStacked = true;
+        }
       }
     }
   }
