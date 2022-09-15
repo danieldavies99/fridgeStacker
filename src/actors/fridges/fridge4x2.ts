@@ -5,6 +5,7 @@ import { Fridge } from './fridge';
 import { Fridge2x4 } from './fridge2x4';
 import { Fridge4x4 } from './fridge4x4';
 import { Fridge5x4 } from './fridge5x4';
+import { StackCollider } from './stackCollider';
 
 export class Fridge4x2 extends Actor implements Fridge {
   private hasLanded = false;
@@ -14,6 +15,8 @@ export class Fridge4x2 extends Actor implements Fridge {
 
   private isBouncy: boolean = false;
   private isStacked: boolean = false;
+
+  private stackCollider: StackCollider; 
 
   constructor(
     gameWidth: number,
@@ -28,6 +31,9 @@ export class Fridge4x2 extends Actor implements Fridge {
     this.isBouncy = isBouncy;
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
+
+    this.stackCollider = new StackCollider(138, 74);
+    this.addChild(this.stackCollider);
   }
 
   onInitialize() {
@@ -42,6 +48,9 @@ export class Fridge4x2 extends Actor implements Fridge {
   }
 
   onCollisionStart(evt: CollisionStartEvent) {
+    if(evt.other instanceof StackCollider) { 
+      return
+    }
     this.land();
   }
 

@@ -1,10 +1,11 @@
-import { Actor, CollisionStartEvent, CollisionType, Color, ExcaliburGraphicsContext, PreCollisionEvent, vec } from 'excalibur';
+import { Actor, CollisionStartEvent, CollisionType, Color, Entity, ExcaliburGraphicsContext, PreCollisionEvent, vec } from 'excalibur';
 import { Resources } from '../../resources';
 import { Truck } from '../truck/truck';
 import { Fridge } from './fridge';
 import { Fridge4x2 } from './fridge4x2';
 import { Fridge4x4 } from './fridge4x4';
 import { Fridge5x4 } from './fridge5x4';
+import { StackCollider } from './stackCollider';
 
 export class Fridge2x4  extends Actor implements Fridge {
   private hasLanded = false;
@@ -14,6 +15,8 @@ export class Fridge2x4  extends Actor implements Fridge {
 
   private isStacked: boolean = false;
   private isBouncy: boolean = false;
+
+  private stackCollider: StackCollider; 
 
   constructor(
     gameWidth: number,
@@ -28,6 +31,9 @@ export class Fridge2x4  extends Actor implements Fridge {
     this.isBouncy = isBouncy;
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
+
+    this.stackCollider = new StackCollider(74, 138);
+    this.addChild(this.stackCollider);
   }
 
   onInitialize() {
@@ -42,22 +48,27 @@ export class Fridge2x4  extends Actor implements Fridge {
   }
 
   onCollisionStart(evt: CollisionStartEvent) {
-    this.land();
+    if(evt.other instanceof StackCollider) { 
+      return
+    }
+    this.land()
   }
 
   onPreCollision(evt: PreCollisionEvent) {
     if(evt.other instanceof Truck) {
       this.isStacked = true;
     }
-
-    if(
-      evt.other instanceof Fridge2x4
-      || evt.other instanceof Fridge4x2
-      || evt.other instanceof Fridge4x4
-      || evt.other instanceof Fridge5x4
-    ) {
-      if(evt.other.getIsStacked()) {
-        this.isStacked = true;
+    if(evt.other instanceof StackCollider) {
+      // console.log(evt.other.parent)
+      if(
+        evt.other.parent instanceof Fridge2x4
+        || evt.other.parent instanceof Fridge4x2
+        || evt.other.parent instanceof Fridge4x4
+        || evt.other.parent instanceof Fridge5x4
+      ) {
+        if(evt.other.parent.getIsStacked()) {
+          this.isStacked = true;
+        }
       }
     }
   }
