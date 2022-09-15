@@ -5,8 +5,6 @@ import { Fridge2x4 } from './actors/fridges/fridge2x4';
 import { Truck } from './actors/truck/truck';
 import { Fridge } from './actors/fridges/fridge';
 import { Fridge4x2 } from './actors/fridges/fridge4x2';
-import { Fridge4x4 } from './actors/fridges/fridge4x4';
-import { Fridge5x4 } from './actors/fridges/fridge5x4';
 import { ScoreIndicator } from './actors/scoreIndicator/scoreIndicator';
 
 
@@ -50,20 +48,6 @@ class Game extends Engine {
         shouldBounce
       );
     }
-    // } else {
-    //   fridge = new Fridge4x4(
-    //     this.drawWidth,
-    //     this.drawHeight,
-    //     shouldBounce
-    //   );
-    // }
-    // else {
-    //   fridge = new Fridge5x4(
-    //     this.drawWidth,
-    //     this.drawHeight,
-    //     shouldBounce
-    //   )
-    // }
     this.fridges.push(fridge);
     this.levelOne.add(this.fridges[this.fridges.length - 1])
   }
@@ -92,6 +76,7 @@ class Game extends Engine {
     game.input.keyboard.on("press", (evt) => {
       if (
         (evt.key === "ArrowLeft" || evt.key === "KeyA")
+        && this.getCurrentFridge()
         && !this.getCurrentFridge().getHasLanded()
       ) {
         this.getCurrentFridge().snapLeft();
@@ -99,6 +84,7 @@ class Game extends Engine {
 
       if (
         (evt.key === "ArrowRight" || evt.key === "KeyD")
+        && this.getCurrentFridge()
         && !this.getCurrentFridge().getHasLanded()
       ) {
         this.getCurrentFridge().snapRight();
@@ -108,7 +94,14 @@ class Game extends Engine {
     game.add('levelOne', this.levelOne);
 
     this.levelOne.onPostUpdate = () => {
-      if (this.getCurrentFridge().getHasLanded() && !this.newFridgeQueued) {
+      if (
+        (
+          this.getCurrentFridge()
+          && this.getCurrentFridge().getHasLanded() 
+          && !this.newFridgeQueued
+        )
+        || (!this.getCurrentFridge() && !this.newFridgeQueued)
+      ) {
         this.newFridgeQueued = true;
         setTimeout(() => {
           this.spawnNewFridge();
@@ -122,6 +115,15 @@ class Game extends Engine {
         }
       })
       this.scoreIndicator.setNumStacked(numStacked)
+
+
+      this.fridges.forEach( (fridge, index) => {
+        if(fridge.isOffScreen) {
+          console.log("killing fridge")
+          this.levelOne.remove(this.fridges[index]);
+          this.fridges.splice(index, 1);
+        }
+      })
     }
 
     return super.start(loader);

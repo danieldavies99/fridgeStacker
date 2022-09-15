@@ -3,8 +3,6 @@ import { Resources } from '../../resources';
 import { Truck } from '../truck/truck';
 import { Fridge } from './fridge';
 import { Fridge4x2 } from './fridge4x2';
-import { Fridge4x4 } from './fridge4x4';
-import { Fridge5x4 } from './fridge5x4';
 import { StackCollider } from './stackCollider';
 
 export class Fridge2x4  extends Actor implements Fridge {
@@ -40,7 +38,7 @@ export class Fridge2x4  extends Actor implements Fridge {
     this.graphics.use(Resources.Fridge2x4Variation1.toSprite());
 
     this.body.collisionType = CollisionType.Active
-    this.body.bounciness = this.isBouncy ? 0.75 : 0.01;
+    this.body.bounciness = this.isBouncy ? 0.75 : 0.00;
 
     this.on('collisionstart', (evt) => this.onCollisionStart(evt));
     this.on('precollision', (evt) => this.onPreCollision(evt));
@@ -63,8 +61,6 @@ export class Fridge2x4  extends Actor implements Fridge {
       if(
         evt.other.parent instanceof Fridge2x4
         || evt.other.parent instanceof Fridge4x2
-        || evt.other.parent instanceof Fridge4x4
-        || evt.other.parent instanceof Fridge5x4
       ) {
         if(evt.other.parent.getIsStacked()) {
           this.isStacked = true;
