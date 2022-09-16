@@ -38,7 +38,8 @@ export class Fridge4x2 extends Actor implements Fridge {
     this.graphics.use(Resources.Fridge4x2Variation1.toSprite());
 
     this.body.collisionType = CollisionType.Active
-    this.body.bounciness = this.isBouncy ? 0.75 : 0.00;
+    this.body.bounciness = this.isBouncy ? 0.75 : 0;
+    this.body.mass = 1;
 
     this.on('collisionstart', (evt) => this.onCollisionStart(evt));
     this.on('precollision', (evt) => this.onPreCollision(evt));
